@@ -78,6 +78,22 @@ services:
     networks:
       - server-network
 
+  carts:
+    build:
+      context: ./
+      dockerfile: ./apps/carts/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq_shop
+      - mongodb_shop
+    volumes:
+      - .:/usr/src/app # any change to base folder should be reflected
+      - /usr/src/app/node_modules
+    command: npm run start:dev carts # overrides CMD from dockerfile
+    networks:
+      - server-network
+
   api:
     build:
       context: ./

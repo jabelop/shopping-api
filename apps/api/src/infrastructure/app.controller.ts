@@ -11,7 +11,8 @@ import Order from '../../../../libs/shared/src/application/order/orderdto';
 export class AppController {
   constructor(@Inject('AUTH_SERVICE') private readonly authService: ClientProxy,
     @Inject('PRODUCTS_SERVICE') private readonly productsService: ClientProxy,
-    @Inject('ORDERS_SERVICE') private readonly ordersService: ClientProxy) { }
+    @Inject('ORDERS_SERVICE') private readonly ordersService: ClientProxy,
+    @Inject('CARTS_SERVICE') private readonly cartsService: ClientProxy) { }
 
   @Post('auth/signup')
   async signup(
@@ -110,5 +111,72 @@ export class AppController {
     }));
   }
 
+  @Get('carts/:id')
+  async getCart(@Param('id') id: string) {
+    return this.cartsService.send(
+      {
+        cmd: 'get-cart',
+      },
+      { id }
+    ).pipe(map((result: Order | { message: string, status: number }) => {
+      if ((<Order>result).id) return result;
+      
+      throw new HttpException(
+        (<{ message: string, status: number }>result).message, 
+        (<{ message: string, status: number }>result).status
+      );
+    }));
+  }
+
+  @Post('carts/create')
+  async createCart(
+    @Body() data: {idCart, idUser},
+  ) {
+    console.info("########################");
+    console.info(data);
+
+    const result: Observable<boolean | { message: string, status: number }> = this.cartsService.send(
+      {
+        cmd: 'create-cart',
+      },
+      data
+    );
+    return result.pipe(map((result: boolean| { message: string, status: number }) => {
+      if (typeof result === 'boolean') return { success: result };
+      throw new HttpException(result.message, result.status);
+    }));
+  }
+
+  @Post('carts/add-product')
+  async addProductToCart(
+    @Body() data: {idCart, idUser},
+  ) {
+    const result: Observable<string | { message: string, status: number }> = this.cartsService.send(
+      {
+        cmd: 'add-cart-product',
+      },
+      data
+    );
+    return result.pipe(map((result: string | { message: string, status: number }) => {
+      if (typeof result === 'string') return { access_token: result };
+      throw new HttpException(result.message, result.status);
+    }));
+  }
+
+  @Post('carts/remove-product')
+  async removeProductToCart(
+    @Body() data: {idCart, idUser},
+  ) {
+    const result: Observable<string | { message: string, status: number }> = this.cartsService.send(
+      {
+        cmd: 'remove-cart-product',
+      },
+      data
+    );
+    return result.pipe(map((result: string | { message: string, status: number }) => {
+      if (typeof result === 'string') return { access_token: result };
+      throw new HttpException(result.message, result.status);
+    }));
+  }
 
 }

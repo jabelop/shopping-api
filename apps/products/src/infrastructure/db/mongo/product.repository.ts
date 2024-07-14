@@ -48,6 +48,7 @@ export class ProductRepositoryMongoose implements ProductRepository {
             const product: ProductMongoose = await this.productModel.findOne({ id });
             if (product.reserved > 0) {
                 product.reserved -= 1;
+                product.stock += 1;
                 const updatedProduct = new this.productModel(product);
                 updatedProduct.save();
                 return true;

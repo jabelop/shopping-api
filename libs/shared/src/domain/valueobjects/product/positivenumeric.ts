@@ -6,7 +6,7 @@ export default class PositiveNumeric implements ValueObject<number> {
     private readonly number: number;
 
     constructor(number: number) {
-        if (!number || number < 0) throw new NegativeNumeric();
+        if (typeof number !== 'number' || number < 0) throw new NegativeNumeric();
         this.number = number;
     }
 

@@ -23,7 +23,8 @@ let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_P
     MongooseModule.forFeature([{ name: OrderMongoose.name, schema: OrderMongooseSchema }]),
   ],
   controllers: [OrdersController],
-  providers: [OrdersService,
+  providers: [
+    OrdersService,
     ordersRepositoryProvider, 
     JwtService,
     {

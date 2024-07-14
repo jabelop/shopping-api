@@ -23,7 +23,8 @@ let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_P
     MongooseModule.forFeature([{ name: ProductMongoose.name, schema: ProductMongooseSchema }]),
   ],
   controllers: [ProductsController],
-  providers: [ProductsService,
+  providers: [
+    ProductsService,
     productRepositoryProvider, 
     JwtService,
     {

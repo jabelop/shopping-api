@@ -1,4 +1,4 @@
-import Product from "./order";
+import Order from "./order";
 
 export interface OrdersRepository {
 
@@ -9,7 +9,7 @@ export interface OrdersRepository {
     * 
     * @returns a Promise with true if was created, false if it was not
     */
-    createOrder(order: Product): Promise<boolean>;
+    createOrder(order: Order): Promise<boolean>;
 
     /**
      * get a order given its id
@@ -18,7 +18,7 @@ export interface OrdersRepository {
      * 
      * @returns a Promise with the order if exists, null if does not
      */
-    getOrder(id: string): Promise<Product | null>;
+    getOrder(id: string): Promise<Order| null>;
 
 }
 

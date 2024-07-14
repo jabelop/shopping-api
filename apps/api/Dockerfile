@@ -1,0 +1,11 @@
+FROM node
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+
+RUN npm ci
+
+RUN npm install amqplib
+
+COPY . .

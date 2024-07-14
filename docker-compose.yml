@@ -1,0 +1,68 @@
+version: '3.2'
+services:
+  rabbitmq_shop:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_shop
+    hostname: rabbitmq_shop
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    env_file:
+      - .env
+    networks:
+      - server-network
+
+  mongodb_shop:
+    image: mongodb/mongodb-community-server:6.0-ubi8
+    environment:
+      - MONGODB_INITDB_ROOT_USERNAME=user
+      - MONGODB_INITDB_ROOT_PASSWORD=pass
+      - MONGODB_INITDB_DATABASE=microservices
+    volumes:
+      - type: bind
+        source: ./data_b
+        target: /data_b/db
+    ports:
+      - 33306:27017
+    container_name: mongodb_shop
+    networks:
+      - server-network
+
+  auth:
+    build:
+      context: ./
+      dockerfile: ./apps/auth/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq_shop
+      - mongodb_shop
+    volumes:
+      - .:/usr/src/app # any change to base folder should be reflected
+      - /usr/src/app/node_modules
+    command: npm run start:dev auth # overrides CMD from dockerfile
+    networks:
+      - server-network
+
+  api:
+    build:
+      context: ./
+      dockerfile: ./apps/api/Dockerfile
+    ports:
+      - '4000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq_shop
+      - auth
+    volumes:
+      - .:/usr/src/app # any change to base folder should be reflected
+      - /usr/src/app/node_modules
+    command: npm run start:dev api
+    networks:
+      - server-network
+
+networks:
+  server-network:

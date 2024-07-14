@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { ProductsController } from './infrastructure/products.controller';
-import { ProductsService } from './application/products.service';
+import { OrdersController } from './infrastructure/orders.controller';
+import { OrdersService } from './application/orders.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { env } from 'process';
-import { ProductRepository } from '../../../libs/shared/src/domain/product/product.repository';
-import { ProductRepositoryMongoose } from './infrastructure/db/mongo/product.repository';
-import { ProductMongoose, ProductMongooseSchema } from './infrastructure/db/mongo/product.schema';
+import { OrdersRepository } from '../../../libs/shared/src/domain/order/orders.repository';
+import { OrdersRepositoryMongoose } from './infrastructure/db/mongo/orders.repository';
+import { OrderMongoose, OrderMongooseSchema } from './infrastructure/db/mongo/order.schema';
 
-const productRepositoryProvider = {provide: ProductRepository, useClass: ProductRepositoryMongoose};
+const ordersRepositoryProvider = {provide: OrdersRepository, useClass: OrdersRepositoryMongoose};
 let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}`;
 
 @Module({
@@ -20,27 +20,27 @@ let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_P
       envFilePath: './.env'
     }),
     MongooseModule.forRoot(url),
-    MongooseModule.forFeature([{ name: ProductMongoose.name, schema: ProductMongooseSchema }]),
+    MongooseModule.forFeature([{ name: OrderMongoose.name, schema: OrderMongooseSchema }]),
   ],
-  controllers: [ProductsController],
-  providers: [ProductsService,
-    productRepositoryProvider, 
+  controllers: [OrdersController],
+  providers: [OrdersService,
+    ordersRepositoryProvider, 
     JwtService,
     {
-      provide: 'PRODUCTS_SERVICE',
+      provide: 'ORDERS_SERVICE',
       useFactory: (configService: ConfigService) => {
 
         const USER = configService.get('RABBITMQ_USER');
         const PASS = configService.get('RABBITMQ_PASS');
         const HOST = configService.get('RABBITMQ_HOST');
-        const PRODUCTS_QUEUE = configService.get('RABBITMQ_PRODUCTS_QUEUE');
+        const ORDERS_QUEUE = configService.get('RABBITMQ_ORDERS_QUEUE');
       
         return ClientProxyFactory.create({
           transport: Transport.RMQ,
           options: {
             urls: [`amqp://${USER}:${PASS}@${HOST}`],
             noAck: false,
-            queue: PRODUCTS_QUEUE,
+            queue: ORDERS_QUEUE,
             queueOptions: {
               durable: true
             }
@@ -51,4 +51,4 @@ let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_P
     }
   ],
 })
-export class ProductsModule {}
+export class OrdersModule {}

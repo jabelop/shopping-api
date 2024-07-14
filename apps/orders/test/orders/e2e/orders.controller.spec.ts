@@ -1,16 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../../../../api/src/app.module';
-import { ClientProxy, ClientProxyFactory, ClientsModule, Transport } from '@nestjs/microservices';
-import { AuthModule } from '../../../src/auth.module';
+import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from '../../../../api/src/infrastructure/app.controller';
-import { randomUUID } from 'crypto';
+import { randomUUID, UUID } from 'crypto';
+import Product from '../../../../../libs/shared/src/domain/product/product';
+import Order from '../../../../../libs/shared/src/domain/order/order';
 
 
 describe('AuthController', () => {
   let app: INestApplication;
+  const id: UUID = randomUUID();
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -108,26 +109,35 @@ describe('AuthController', () => {
   });
 
 
-  it('should response 201 on POST /auth/login good data', async () => {
-    try {
-      await request(app.getHttpServer())
-      .post('/auth/signup')
-      .send({id: "3aae2f88-818c-408b-9990-cd2d2f961623",username: "test1", password: "test1Password"});
-    } catch (error) {}
+  it('should response 201 on POST orders/create good data', async () => {
+    const products: Product[] = [{ "id": randomUUID(), "name": randomUUID(), "price": 130, "stock": 4, "reserved": 0 }];
+    const order: Order =
+      { id: id, userId: "4b90ef9d-33d1-487d-bc9e-f861558c84a0", products: products, total: 100 };
     return request(app.getHttpServer())
-      .post('/auth/login')
-      .send({username: "test1", password: "test1Password"})
+      .post('/orders/create')
+      .send(order)
       .then((response) => {
         expect(response.statusCode).toBe(201);
       });
   });
 
-  it('should response 404 on POST /auth/login not existing data', () => {
-    return request(app.getHttpServer())
-      .post('/auth/login')
-      .send({username: "test11", password: "test11Password"})
+  it('should response 200 on Get /orders/:id existing data', async () => {
+    const newId = "4b90ef9d-33d1-487d-bc9e-f864d52c84a0";
+    const products: Product[] = [{ "id": randomUUID(), "name": randomUUID(), "price": 130, "stock": 4, "reserved": 0 }];
+    const order: Order =
+      { id: newId, userId: "4b90ef9d-33d1-487d-bc9e-f861558c84a0", products: products, total: 100 };
+    try {
+        await request(app.getHttpServer())
+      .post('/orders/create')
+      .send(order)
       .then((response) => {
-        expect(response.statusCode).toBe(404);
+        expect(response.statusCode).toBe(201);
+      });
+    } catch (error) {}
+    return request(app.getHttpServer())
+      .get(`/orders/${newId}`)
+      .then((response) => {
+        expect(response.statusCode).toBe(200);
       });
   });
 });

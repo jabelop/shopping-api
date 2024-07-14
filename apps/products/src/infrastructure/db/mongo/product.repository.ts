@@ -17,6 +17,7 @@ export class ProductRepositoryMongoose implements ProductRepository {
             if (await createdProduct.save()) return true;
             return false;
         } catch (error) {
+            console.error(error);
             return false;
         }
     }
@@ -37,6 +38,7 @@ export class ProductRepositoryMongoose implements ProductRepository {
             }
             return false;
         } catch (error) {
+            console.error(error);
             return false;
         }
     }
@@ -52,6 +54,7 @@ export class ProductRepositoryMongoose implements ProductRepository {
             }
             return false;
         } catch (error) {
+            console.error(error);
             return false;
         }
     }

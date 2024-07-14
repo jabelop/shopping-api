@@ -5,11 +5,13 @@ import { Response } from 'express';
 import { map, Observable } from 'rxjs';
 import * as bcrypt from 'bcrypt';
 import Product from '../../../../libs/shared/src/application/product/prouctdto';
+import Order from '../../../../libs/shared/src/application/order/orderdto';
 
 @Controller()
 export class AppController {
   constructor(@Inject('AUTH_SERVICE') private readonly authService: ClientProxy,
-    @Inject('PRODUCTS_SERVICE') private readonly productsService: ClientProxy) { }
+    @Inject('PRODUCTS_SERVICE') private readonly productsService: ClientProxy,
+    @Inject('ORDERS_SERVICE') private readonly ordersService: ClientProxy) { }
 
   @Post('auth/signup')
   async signup(
@@ -71,7 +73,40 @@ export class AppController {
     );
     return result.pipe(map((result: string | { message: string, status: number }) => {
       if (typeof result === 'string') return { access_token: result };
-      throw new BadRequestException(result.message);
+      throw new HttpException(result.message, result.status);
+    }));
+  }
+
+  @Post('orders/create')
+  async create(
+    @Body() order: Order,
+  ) {
+    const result: Observable<boolean | { message: string, status: number }> = this.ordersService.send(
+      {
+        cmd: 'create-order',
+      },
+      order
+    );
+    return result.pipe(map((result: boolean | { message: string, status: number }) => {
+      if (typeof result === 'boolean') return { success: true };
+      throw new HttpException(result.message, result.status);
+    }));
+  }
+
+  @Get('orders/:id')
+  async getOrder(@Param('id') id: string) {
+    return this.ordersService.send(
+      {
+        cmd: 'get-order',
+      },
+      { id }
+    ).pipe(map((result: Order | { message: string, status: number }) => {
+      if ((<Order>result).id) return result;
+      
+      throw new HttpException(
+        (<{ message: string, status: number }>result).message, 
+        (<{ message: string, status: number }>result).status
+      );
     }));
   }
 

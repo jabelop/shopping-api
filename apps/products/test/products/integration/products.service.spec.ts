@@ -4,14 +4,14 @@ import { JwtService } from '@nestjs/jwt';
 import { ProductRepository } from '../../../../../libs/shared/src/domain/product/product.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { env } from 'process';
-import { UUID } from 'crypto';
+import { randomUUID, UUID } from 'crypto';
 import { ProductsService } from '../../../src/application/products.service';
 import { ProductsModule } from '../../../src/products.module';
 
 describe('ProductsService', () => {
   let service: ProductsService;
   let productRepository: ProductRepository;
-  const id: UUID = "ebf6e8cd-79e3-46d2-9032-3442f4793a04";
+  const id: UUID = "ebf6e8cd-79e3-46d2-9032-3442f0793a04";
   
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,7 +21,7 @@ describe('ProductsService', () => {
 
     service = module.get<ProductsService>(ProductsService);
     productRepository = module.get<ProductRepository>(ProductRepository);
-    productRepository.saveProduct({ id, name: "product14", price: 10, stock: 10, reserved: 2 });
+    productRepository.saveProduct({ id: id, name: "product15", price: 10, stock: 100000, reserved: 2000 });
   });
 
   it('should be defined', () => {

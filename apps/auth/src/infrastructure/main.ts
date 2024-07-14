@@ -12,7 +12,6 @@ async function bootstrap() {
   const HOST = configService.get('RABBITMQ_HOST');
   const AUTH_QUEUE = configService.get('RABBITMQ_AUTH_QUEUE');
 
-  console.info("AUTH RABBIT INFO:", USER, PASS, HOST, AUTH_QUEUE);
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {

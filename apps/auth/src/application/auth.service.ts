@@ -23,7 +23,6 @@ export class AuthService {
    * @returns a Promise with the user data if the user is valid, with null if is not 
    */
   async validateUser(username: string, pass: string): Promise<any> {
-    console.log("Validating:", username, pass);
     const user = await this.userRepository.getUser(username);
     const isRightPassword: boolean = await bcrypt.compare(pass, user.password);
     if (user && isRightPassword) {
@@ -42,7 +41,6 @@ export class AuthService {
    */
   async login(user: UserDTO): Promise<any> {
     const userDB: UserDTO = await this.userRepository.getUser(user.username);
-    console.info("::::: User DB", userDB);
     const isRightPassword: boolean = await bcrypt.compare(user.password, userDB.password);
     if (userDB && isRightPassword) {
       const payload = { username: userDB.username, id: userDB.id };

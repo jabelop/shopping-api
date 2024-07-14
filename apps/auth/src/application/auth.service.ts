@@ -40,14 +40,18 @@ export class AuthService {
    * @returns an object with the access token if the user data is correct, null if it is not 
    */
   async login(user: UserDTO): Promise<any> {
+    
     const userDB: UserDTO = await this.userRepository.getUser(user.username);
+    if (!userDB) return null;
+    
     const isRightPassword: boolean = await bcrypt.compare(user.password, userDB.password);
-    if (userDB && isRightPassword) {
+    if (isRightPassword) {
       const payload = { username: userDB.username, id: userDB.id };
       return {
         access_token: this.jwtService.sign(payload, { secret: JWT_SECRET }),
       };
     }
+
     return null;
 
   }

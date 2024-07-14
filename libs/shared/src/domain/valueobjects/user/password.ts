@@ -1,5 +1,5 @@
-import BadPassword from "../exceptions/badpassword";
-import ValueObject from "./valueobject";
+import BadPassword from "../../exceptions/user/badpassword";
+import ValueObject from "../valueobject";
 
 export default class Password implements ValueObject<string> {
 

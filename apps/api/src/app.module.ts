@@ -35,6 +35,30 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
         });
       },
       inject: [ConfigService],
+    },
+    {
+      provide: 'PRODUCTS_SERVICE',
+      useFactory: (configService: ConfigService) => {
+
+        
+        const USER = configService.get('RABBITMQ_USER');
+        const PASS = configService.get('RABBITMQ_PASS');
+        const HOST = configService.get('RABBITMQ_HOST');
+        const PRODUCT_QUEUE = configService.get('RABBITMQ_PRODUCTS_QUEUE');
+      
+        return ClientProxyFactory.create({
+          transport: Transport.RMQ,
+          options: {
+            urls: [`amqp://${USER}:${PASS}@${HOST}`],
+            noAck: false,
+            queue: PRODUCT_QUEUE,
+            queueOptions: {
+              durable: true
+            }
+          }
+        });
+      },
+      inject: [ConfigService],
     }
   ],
 })

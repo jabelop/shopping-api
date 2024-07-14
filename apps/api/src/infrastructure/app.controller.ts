@@ -1,13 +1,15 @@
-import { BadRequestException, Body, Controller, Get, Inject, Param, Post, Response as ResponseAn } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpException, Inject, Param, Post, Response as ResponseAn } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import User from '../../../../libs/shared/src/application/user/userdto';
 import { Response } from 'express';
 import { map, Observable } from 'rxjs';
 import * as bcrypt from 'bcrypt';
+import Product from '../../../../libs/shared/src/application/product/prouctdto';
 
 @Controller()
 export class AppController {
-  constructor(@Inject('AUTH_SERVICE') private readonly authService: ClientProxy) { }
+  constructor(@Inject('AUTH_SERVICE') private readonly authService: ClientProxy,
+    @Inject('PRODUCTS_SERVICE') private readonly productsService: ClientProxy) { }
 
   @Post('auth/signup')
   async signup(
@@ -41,19 +43,37 @@ export class AppController {
       user
     );
     return result.pipe(map((result: string | { message: string, status: number }) => {
-      if(typeof result === 'string') return {access_token: result}; 
-      throw new BadRequestException(result.message);
-  }));
-}
+      if (typeof result === 'string') return { access_token: result };
+      throw new HttpException(result.message, result.status);
+    }));
+  }
 
-@Get('user/:id')
-async getUser(@Param('id') id: string, @ResponseAn() res: Response) {
-  const token = this.authService.send(
-    {
-      cmd: 'get-user',
-    },
-    { id }
-  );
-  res.header({ Authorization: token }).json(token);
-}
+  @Get('user/:id')
+  async getUser(@Param('id') id: string, @ResponseAn() res: Response) {
+    const token = this.authService.send(
+      {
+        cmd: 'get-user',
+      },
+      { id }
+    );
+    res.header({ Authorization: token }).json(token);
+  }
+
+  @Post('products/save')
+  async save(
+    @Body() product: Product,
+  ) {
+    const result: Observable<string | { message: string, status: number }> = this.productsService.send(
+      {
+        cmd: 'save-product',
+      },
+      product
+    );
+    return result.pipe(map((result: string | { message: string, status: number }) => {
+      if (typeof result === 'string') return { access_token: result };
+      throw new BadRequestException(result.message);
+    }));
+  }
+
+
 }

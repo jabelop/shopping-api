@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { BadRequestException, Controller, HttpException, HttpStatus, Inject, NotFoundException } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { ClientProxy, Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 import User from '../../../../libs/shared/src/application/user/userdto';
@@ -30,7 +30,7 @@ export class AuthController {
       channel.ack(message);
 
       if (result) return result.access_token;
-      return new BadRequestException("User or password incorrect");
+      return new NotFoundException("User or password incorrect");
 
     } catch (error) {
       return error;
@@ -44,7 +44,6 @@ export class AuthController {
     try {
       const channel: any = context.getChannelRef();
       const message: Record<string, string> = context.getMessage();
-      console.info("message: ", message.content.toString());
       const receivedUser: User = JSON.parse(message.content.toString()).data;
       const result: boolean = await this.authService.save(receivedUser);
       channel.ack(message);

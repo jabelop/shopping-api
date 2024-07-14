@@ -1,8 +1,8 @@
 import UserDTO from '../../../../libs/shared/src/application/user/userdto';
 import UserInterface from '../../../../libs/shared/src/domain/user/user' ;
 import Id from '../../../../libs/shared/src/domain/valueobjects/id';
-import Password from '../../../../libs/shared/src/domain/valueobjects/password';
-import UserName from '../../../../libs/shared/src/domain/valueobjects/username';
+import Password from '../../../../libs/shared/src/domain/valueobjects/user/password';
+import UserName from '../../../../libs/shared/src/domain/valueobjects/user/username';
 
 export default class User implements UserInterface {
     id: string;

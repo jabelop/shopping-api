@@ -9,6 +9,7 @@ export interface UserRepository {
      * @returns a Promise with true if was saved, false if there was an error
      */
     saveUser(user: User): Promise<boolean>;
+    
     /**
      * get a user given their username
      * 

@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './infrastructure/auth.controller';
-import { AuthService } from './application/auth.service';
+import { ProductsController } from './infrastructure/products.controller';
+import { ProductsService } from './application/products.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
-import { UserMongoose, UserMongooseSchema } from './infrastructure/db/mongo/user.schema';
-import { UserRepository } from '../../../libs/shared/src/domain/user/user.repository';
-import { UserRepositoryMongoose } from './infrastructure/db/mongo/user.repository';
+import { MongooseModule } from '@nestjs/mongoose';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { env } from 'process';
+import { ProductRepository } from '../../../libs/shared/src/domain/product/product.repository';
+import { ProductRepositoryMongoose } from './infrastructure/db/mongo/product.repository';
+import { ProductMongoose, ProductMongooseSchema } from './infrastructure/db/mongo/product.schema';
 
-const userRepositoryProvider = {provide: UserRepository, useClass: UserRepositoryMongoose};
+const productRepositoryProvider = {provide: ProductRepository, useClass: ProductRepositoryMongoose};
 let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_PORT}`;
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -19,21 +20,20 @@ let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_P
       envFilePath: './.env'
     }),
     MongooseModule.forRoot(url),
-    MongooseModule.forFeature([{ name: UserMongoose.name, schema: UserMongooseSchema }]),
+    MongooseModule.forFeature([{ name: ProductMongoose.name, schema: ProductMongooseSchema }]),
   ],
-  controllers: [AuthController],
-  providers: [
-    AuthService, 
-    userRepositoryProvider, 
+  controllers: [ProductsController],
+  providers: [ProductsService,
+    productRepositoryProvider, 
     JwtService,
     {
-      provide: 'AUTH_SERVICE',
+      provide: 'PRODUCTS_SERVICE',
       useFactory: (configService: ConfigService) => {
 
         const USER = configService.get('RABBITMQ_USER');
         const PASS = configService.get('RABBITMQ_PASS');
         const HOST = configService.get('RABBITMQ_HOST');
-        const AUTH_QUEUE = configService.get('RABBITMQ_AUTH_QUEUE');
+        const AUTH_QUEUE = configService.get('RABBITMQ_PRODUCTs_QUEUE');
       
         return ClientProxyFactory.create({
           transport: Transport.RMQ,
@@ -51,4 +51,4 @@ let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_P
     }
   ],
 })
-export class AuthModule {}
+export class ProductsModule {}

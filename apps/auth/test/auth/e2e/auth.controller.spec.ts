@@ -6,6 +6,7 @@ import { ClientProxy, ClientProxyFactory, ClientsModule, Transport } from '@nest
 import { AuthModule } from '../../../src/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from '../../../../api/src/infrastructure/app.controller';
+import { randomUUID } from 'crypto';
 
 
 describe('AuthController', () => {
@@ -46,7 +47,32 @@ describe('AuthController', () => {
             });
           },
           inject: [ConfigService],
-        }]
+        },
+        {
+          provide: 'PRODUCTS_SERVICE',
+          useFactory: (configService: ConfigService) => {
+    
+            
+            const USER = configService.get('RABBITMQ_USER');
+            const PASS = configService.get('RABBITMQ_PASS');
+            const HOST = configService.get('RABBITMQ_HOST');
+            const PRODUCT_QUEUE = configService.get('RABBITMQ_PRODUCTS_QUEUE');
+          
+            return ClientProxyFactory.create({
+              transport: Transport.RMQ,
+              options: {
+                urls: [`amqp://${USER}:${PASS}@${HOST}`],
+                noAck: false,
+                queue: PRODUCT_QUEUE,
+                queueOptions: {
+                  durable: true
+                }
+              }
+            });
+          },
+          inject: [ConfigService],
+        }
+      ]
     }).compile();
 
     app = moduleFixture.createNestApplication();
@@ -58,12 +84,17 @@ describe('AuthController', () => {
   });
 
 
-  it('should response 200 on POST /auth/login good data', () => {
+  it('should response 201 on POST /auth/login good data', async () => {
+    try {
+      await request(app.getHttpServer())
+      .post('/auth/signup')
+      .send({id: "3aae2f88-818c-408b-9990-cd2d2f961623",username: "test1", password: "test1Password"});
+    } catch (error) {}
     return request(app.getHttpServer())
       .post('/auth/login')
       .send({username: "test1", password: "test1Password"})
       .then((response) => {
-        expect(response.statusCode).toBe(200);
+        expect(response.statusCode).toBe(201);
       });
   });
 

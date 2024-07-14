@@ -1,5 +1,5 @@
-import BadUserName from "../exceptions/badusername";
-import ValueObject from "./valueobject";
+import BadUserName from "../../exceptions/user/badusername";
+import ValueObject from "../valueobject";
 
 export default class UserName implements ValueObject<string> {
 

@@ -2,13 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from '../../../../../libs/shared/src/domain/user/user.repository';
-import { UserRepositoryMongoose } from '../../../src/infrastructure/db/mongo/user.repository';
 import { AuthService } from '../../../src/application/auth.service';
 import { AuthModule } from '../../../src/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { env } from 'process';
 import { randomUUID, UUID } from 'crypto';
-//const usersRepositoryProvider = {provide: UserRepository, useClass: UserRepositoryMongoose};
 
 describe('AuthService', () => {
   let service: AuthService;

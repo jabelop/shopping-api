@@ -53,55 +53,8 @@ describe('AuthController', () => {
     await app.init();
   });
 
-  // beforeAll(async () => {
-  //   const moduleFixture: TestingModule = await Test.createTestingModule({
-  //     imports: [
-  //       AppModule,
-  //       ClientsModule.register([
-  //         { name: 'AuthService', transport: Transport.RMQ },
-  //       ]),
-  //     ],
-  //   }).compile();
-
-  //   app = moduleFixture.createNestApplication();
-
-  //   app.connectMicroservice({
-  //     transport: Transport.RMQ,
-  //   });
-
-  //   await app.startAllMicroservices();
-  //   await app.init();
-
-  //   client = app.get('AuthService');
-  //   await client.connect();
-  // });
-
-  // beforeAll(async () => {
-  //   const moduleFixture: TestingModule = await Test.createTestingModule({
-  //     imports: [
-  //       AppModule,
-  //       ClientsModule.register([
-  //         { name: 'AUTH_SERVICE', transport: Transport.RMQ },
-  //       ]),
-  //     ],
-  //   }).compile();
-
-  //   app = moduleFixture.createNestApplication();
-
-  //   app.connectMicroservice({
-  //     transport: Transport.RMQ,
-  //   });
-
-  //   await app.startAllMicroservices();
-  //   await app.init();
-
-  //   client = app.get('AUTH_SERVICE');
-  //   await client.connect();
-  // });
-
   afterAll(async () => {
     await app.close();
-    // client.close();
   });
 
 

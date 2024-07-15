@@ -81,14 +81,14 @@ describe('CartsController', () => {
             const USER = configService.get('RABBITMQ_USER');
             const PASS = configService.get('RABBITMQ_PASS');
             const HOST = configService.get('RABBITMQ_HOST');
-            const ORDERS__QUEUE = configService.get('RABBITMQ_ORDERS_QUEUE');
+            const ORDERS_QUEUE = configService.get('RABBITMQ_ORDERS_QUEUE');
           
             return ClientProxyFactory.create({
               transport: Transport.RMQ,
               options: {
                 urls: [`amqp://${USER}:${PASS}@${HOST}`],
                 noAck: false,
-                queue: ORDERS__QUEUE,
+                queue: ORDERS_QUEUE,
                 queueOptions: {
                   durable: true
                 }

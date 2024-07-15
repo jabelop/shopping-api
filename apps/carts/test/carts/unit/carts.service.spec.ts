@@ -34,12 +34,12 @@ describe('CartsService', () => {
 
   it('should add a product to cart', async () => {
     const product: Product = { id: "4b90ef9d-33d1-487d-bc9e-f861558c84a0", name: "product2", price: 130, stock: 4, reserved: 0 };
-    expect(await service.addProductToCart('3aae2f88-818c-408b-9990-cd2d2f961623', product)).toBe(true);
+    expect(await service.addProductToCart('3aae2f88-818c-408b-9990-cd2d2f961623', product)).not.toBe(null);
   });
 
   it('should remove a product to cart', async () => {
     const product: Product = { id: "3aae2f88-818c-408b-9990-cd2d2f961623" , name: "product1", price: 10, stock: 10, reserved: 2 };
-    expect(await service.addProductToCart('3aae2f88-818c-408b-9990-cd2d2f961623', product)).toBe(true);
+    expect(await service.addProductToCart('3aae2f88-818c-408b-9990-cd2d2f961623', product)).not.toBe(null);
   });
 
 });

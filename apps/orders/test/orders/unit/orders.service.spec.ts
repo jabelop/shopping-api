@@ -8,7 +8,7 @@ import { OrderMongoose } from '../../../src/infrastructure/db/mongo/order.schema
 import { OrdersRepositoryTest } from './ordersRepositoryTest';
 import Product from '../../../../../libs/shared/src/domain/product/product';
 
-const productsRepositoryProvider = {provide: OrdersRepository, useClass: OrdersRepositoryTest};
+const ordersRepositoryProvider = {provide: OrdersRepository, useClass: OrdersRepositoryTest};
 
 describe('OrdersService', () => {
   let service: OrdersService;
@@ -16,7 +16,7 @@ describe('OrdersService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
-      providers: [productsRepositoryProvider, JwtService, OrderMongoose, OrdersService],
+      providers: [ordersRepositoryProvider, JwtService, OrderMongoose, OrdersService],
     }).compile();
 
     service = module.get<OrdersService>(OrdersService);

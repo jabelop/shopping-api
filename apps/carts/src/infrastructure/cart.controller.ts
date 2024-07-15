@@ -10,7 +10,8 @@ export class CartsController {
 
   constructor(@Inject(CartsService) private readonly cartsService: CartsService,
     @Inject('CARTS_SERVICE') private readonly rmqService: ClientProxy,
-    @Inject('PRODUCTS_SERVICE') private readonly rmqProductsService: ClientProxy
+    @Inject('PRODUCTS_SERVICE') private readonly rmqProductsService: ClientProxy,
+    @Inject('CARTS_TOTAL_SERVICE') private readonly rmqCartsTotalService: ClientProxy
   ) { }
 
   @MessagePattern({ cmd: 'create-cart' })
@@ -69,8 +70,23 @@ export class CartsController {
         );
       })).subscribe(async (product) => {
 
-        const result: boolean = await this.cartsService.addProductToCart(idCart, <Product>product);
-        if (result) {
+        const cart: Cart = await this.cartsService.addProductToCart(idCart, <Product>product);
+
+        if (cart) {
+          
+          this.rmqCartsTotalService.send({cmd: 'get-total'}, cart)
+          .pipe(map((result: number | { message: string, status: number }) => {
+            if (typeof result === 'number') return result;
+    
+            throw new HttpException(
+              (<{ message: string, status: number }>result).message,
+              (<{ message: string, status: number }>result).status
+            );
+          })).subscribe(async (total: number) => {
+            cart.total = total;
+            await this.cartsService.saveCart(cart);
+          });
+
           channel.ack(message);
           return this.rmqProductsService.send(
             {
@@ -115,7 +131,7 @@ export class CartsController {
         );
       })).subscribe(async (product) => {
 
-        const result: boolean = await this.cartsService.addProductToCart(idCart, <Product>product);
+        const result: Cart = await this.cartsService.addProductToCart(idCart, <Product>product);
         if (result) {
           channel.ack(message);
           return this.rmqProductsService.send(

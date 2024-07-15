@@ -72,6 +72,29 @@ let url = `mongodb://${env.DB_USER}:${env.DB_PASSWORD}@${env.DB_HOST}:${env.DB_P
         });
       },
       inject: [ConfigService],
+    },
+    {
+      provide: 'CARTS_TOTAL_SERVICE',
+      useFactory: (configService: ConfigService) => {
+
+        const USER = configService.get('RABBITMQ_USER');
+        const PASS = configService.get('RABBITMQ_PASS');
+        const HOST = configService.get('RABBITMQ_HOST');
+        const CARTS_TOTAL_QUEUE = configService.get('RABBITMQ_CARTS_TOTAL_QUEUE');
+      
+        return ClientProxyFactory.create({
+          transport: Transport.RMQ,
+          options: {
+            urls: [`amqp://${USER}:${PASS}@${HOST}`],
+            noAck: false,
+            queue: CARTS_TOTAL_QUEUE,
+            queueOptions: {
+              durable: true
+            }
+          }
+        });
+      },
+      inject: [ConfigService],
     }
   ],
 })

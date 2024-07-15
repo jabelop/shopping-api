@@ -62,6 +62,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/carts/tsconfig.app.json"
       }
+    },
+    "total-carts": {
+      "type": "application",
+      "root": "apps/total-carts",
+      "entryFile": "main",
+      "sourceRoot": "apps/total-carts/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/total-carts/tsconfig.app.json"
+      }
     }
   }
 }

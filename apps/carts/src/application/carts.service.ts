@@ -3,6 +3,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CartsRepository } from '../../../../libs/shared/src/domain/cart/carts.repository';
 import Cart from '../domain/cart';
 import Product from '../../../../libs/shared/src/domain/product/product';
+import CartDTO from '../../../../libs/shared/src/application/cart/cartdto';
 
 @Injectable()
 export class CartsService {
@@ -43,15 +44,15 @@ export class CartsService {
      * 
      * @returns a Promise with true if the product was added, false if was not
      */
-  async addProductToCart(idCart: string, product: Product): Promise<boolean> {
+  async addProductToCart(idCart: string, product: Product): Promise<Cart> {
     const cart: Cart = await this.cartsRepository.getCart(idCart);
 
     if (!cart) throw new NotFoundException("Cart does not exist");
 
     const cartModel: Cart = Cart.getCartFromDTO(cart);
-    cart.products.push(product);
-    this.cartsRepository.saveCart(cart);
-    return true;
+    cartModel.products.push(product);
+    this.cartsRepository.saveCart(cartModel);
+    return cartModel;
 
   }
 
@@ -76,4 +77,17 @@ export class CartsService {
     return true;
 
   };
+
+  /**
+   * save a cart
+   * 
+   * @param cart the cart to save
+   * 
+   * @returns a Promise with true if the cart was saved, false it there was an error
+   */
+  async saveCart(cart: CartDTO): Promise<boolean> {
+    const cartModel: Cart = Cart.getCartFromDTO(cart);
+    const result: boolean = await this.cartsRepository.saveCart(cartModel);
+    return result;
+  }
 }

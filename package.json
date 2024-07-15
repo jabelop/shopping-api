@@ -32,6 +32,8 @@
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.3",
     "bcrypt": "^5.1.1",
+    "mongodb": "^6.8.0",
+    "node-cron": "^3.0.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"

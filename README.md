@@ -6,4 +6,4 @@ Clone this repository, setup the .env variables, an example.env is provided. You
 The integration tests requires you to have an local instance of mongo running, you must set the connection variables on the .env file.
 
 ## Running the API
-To run the API ```docker-compose up --build``` all the containers for the services will be deployed and connected.
+To run the API ```docker-compose up --build``` all the containers for the services will be deployed and connected. Run the api on a second terminal for testing (e2e specific).

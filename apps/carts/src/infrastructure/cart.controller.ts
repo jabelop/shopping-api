@@ -1,8 +1,9 @@
-import { BadRequestException, Controller, HttpException, Inject } from '@nestjs/common';
+import { BadRequestException, Controller, HttpException, Inject, NotFoundException } from '@nestjs/common';
 import { ClientProxy, Ctx, MessagePattern, RmqContext } from '@nestjs/microservices';
 import { map } from 'rxjs';
 import { CartsService } from '../application/carts.service';
 import Product from '../../../../libs/shared/src/domain/product/product';
+import Cart from '../../../../libs/shared/src/application/cart/cartdto';
 
 @Controller()
 export class CartsController {
@@ -18,14 +19,29 @@ export class CartsController {
       const channel: any = context.getChannelRef();
       const message: Record<string, string> = context.getMessage();
       const { idCart, idUser } = JSON.parse(message.content.toString()).data;
-      console.info(":::::::::::::::::::.");
-      console.info(idCart, idUser);
       const result: boolean = await this.cartsService.createCart(idCart, idUser);
 
       channel.ack(message);
 
       if (result) return true;
       throw new BadRequestException("Data no valid");
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  @MessagePattern({ cmd: 'get-cart' })
+  async getCart(@Ctx() context: RmqContext): Promise<Cart | HttpException> {
+    try {
+      const channel: any = context.getChannelRef();
+      const message: Record<string, string> = context.getMessage();
+      const { idCart } = JSON.parse(message.content.toString()).data;
+      const cart: Cart = await this.cartsService.getCart(idCart);
+
+      channel.ack(message);
+
+      return cart || new NotFoundException('Cart not found');
     } catch (error) {
       console.error(error);
       return error;
@@ -63,7 +79,7 @@ export class CartsController {
             { idCart, idProduct }
           ).pipe(map((result: boolean | { message: string, status: number }) => {
             if (typeof result === 'boolean') return result;
-    
+
             throw new HttpException(
               (<{ message: string, status: number }>result).message,
               (<{ message: string, status: number }>result).status
@@ -109,7 +125,7 @@ export class CartsController {
             { idCart, idProduct }
           ).pipe(map((result: boolean | { message: string, status: number }) => {
             if (typeof result === 'boolean') return result;
-    
+
             throw new HttpException(
               (<{ message: string, status: number }>result).message,
               (<{ message: string, status: number }>result).status

@@ -16,7 +16,7 @@ export class CartMongoose {
   @Prop()
   products: Product[];
 
-  @Prop({min: 1})
+  @Prop({min: 0})
   total: number;
 }
 

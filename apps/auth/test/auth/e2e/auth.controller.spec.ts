@@ -80,7 +80,7 @@ describe('AuthController', () => {
             const USER = configService.get('RABBITMQ_USER');
             const PASS = configService.get('RABBITMQ_PASS');
             const HOST = configService.get('RABBITMQ_HOST');
-            const ORDERS__QUEUE = configService.get('RABBITMQ_ORDERS__QUEUE');
+            const ORDERS__QUEUE = configService.get('RABBITMQ_ORDERS_QUEUE');
           
             return ClientProxyFactory.create({
               transport: Transport.RMQ,
@@ -88,6 +88,30 @@ describe('AuthController', () => {
                 urls: [`amqp://${USER}:${PASS}@${HOST}`],
                 noAck: false,
                 queue: ORDERS__QUEUE,
+                queueOptions: {
+                  durable: true
+                }
+              }
+            });
+          },
+          inject: [ConfigService],
+        },
+        {
+          provide: 'CARTS_SERVICE',
+          useFactory: (configService: ConfigService) => {
+    
+            
+            const USER = configService.get('RABBITMQ_USER');
+            const PASS = configService.get('RABBITMQ_PASS');
+            const HOST = configService.get('RABBITMQ_HOST');
+            const CARTS_QUEUE = configService.get('RABBITMQ_CARTS_QUEUE');
+          
+            return ClientProxyFactory.create({
+              transport: Transport.RMQ,
+              options: {
+                urls: [`amqp://${USER}:${PASS}@${HOST}`],
+                noAck: false,
+                queue: CARTS_QUEUE,
                 queueOptions: {
                   durable: true
                 }

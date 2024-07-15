@@ -54,13 +54,13 @@
         "tsConfigPath": "apps/orders/tsconfig.app.json"
       }
     },
-    "cart": {
+    "carts": {
       "type": "application",
-      "root": "apps/cart",
+      "root": "apps/carts",
       "entryFile": "main",
-      "sourceRoot": "apps/cart/src",
+      "sourceRoot": "apps/carts/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/cart/tsconfig.app.json"
+        "tsConfigPath": "apps/carts/tsconfig.app.json"
       }
     }
   }

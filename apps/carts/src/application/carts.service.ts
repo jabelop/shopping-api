@@ -25,6 +25,17 @@ export class CartsService {
   }
 
   /**
+   * get a cart
+   * 
+   * @param id the id to look for
+   * 
+   * @returns a Promise with the cart if was found, null if not
+   */
+  async getCart(id: string): Promise <Cart> {
+    return await this.cartsRepository.getCart(id);
+  }
+
+  /**
      * add a product given its id to a cart given its id
      * 
      * @param idCart the id of the cart

@@ -47,8 +47,6 @@ export class CartsRepositoryTest implements CartsRepository {
     }
 
     async getCart(id: string): Promise<Cart | null> {
-        console.info("::::::::::::::::::::::::");
-        console.info("idCart:", id);
         const cart: Cart | undefined = this.carts.find((order) => order.id === id);
         return cart || null;
     }

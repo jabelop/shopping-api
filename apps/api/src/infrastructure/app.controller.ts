@@ -132,9 +132,6 @@ export class AppController {
   async createCart(
     @Body() data: {idCart, idUser},
   ) {
-    console.info("########################");
-    console.info(data);
-
     const result: Observable<boolean | { message: string, status: number }> = this.cartsService.send(
       {
         cmd: 'create-cart',

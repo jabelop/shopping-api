@@ -5,8 +5,8 @@ import { ClientProxyFactory, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from '../../../../api/src/infrastructure/app.controller';
 import { randomUUID, UUID } from 'crypto';
-import Product from '../../../../../libs/shared/src/domain/product/product';
-import Order from '../../../../../libs/shared/src/domain/order/order';
+import Product from '../../../../../libs/shared/src/application/product/prouctdto';
+import Order from '../../../../../libs/shared/src/application/order/orderdto';
 
 
 describe('OrdersController', () => {

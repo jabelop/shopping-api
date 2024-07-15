@@ -1,0 +1,24 @@
+● Imagine you want to have a global function that stores in DB the actions carried out by users
+ (For example: Order X has been created from Cart Y). How would you do it?
+
+ - I would create another microservice listenning all the queues with user actions published and saving 
+   the actions to its own database. 
+
+
+● You want to handle a special case exception, for example, whenever the ModelNotFound exception is 
+  thrown you want the API to return a special message, how do we implement it?
+  
+  - I would create a custom ModelNotFound exception extending from HttpException, you can find examples on:
+    "/libs/shared/src/domain/exceptions".
+
+● Does a logout endpoint make sense in this kind of API?
+
+  - It makes sense to have it on the frontend and to follow a refresh token strategy due to the stateless nature of JWT.
+
+
+● How would you implement additional security measures (avoid cross-site scripting attacks, 
+  enforce secure (HTTP over SSL/TLS) connections, ...) in this API?
+
+    - I will install libraries like helmet that helps you to deal with that, also the use 
+      of ORMs prevents the SQL injections attacks and of course the basic but not less important,
+      you can never trust on the data coming from the outside, so, always sanitize your inputs.

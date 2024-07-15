@@ -5,4 +5,5 @@ export default interface Cart {
     userId: string;
     products?: Product[];
     total?: number;
+    created_at?: Date;
 }

@@ -33,6 +33,7 @@ export class CartsService {
    * @returns a Promise with the cart if was found, null if not
    */
   async getCart(id: string): Promise <Cart> {
+    console.info("getCart:",id);
     return await this.cartsRepository.getCart(id);
   }
 

@@ -37,8 +37,9 @@ export class CartsController {
     try {
       const channel: any = context.getChannelRef();
       const message: Record<string, string> = context.getMessage();
-      const { idCart } = JSON.parse(message.content.toString()).data;
-      const cart: Cart = await this.cartsService.getCart(idCart);
+      console.info("Cart:",JSON.parse(message.content.toString()).data);
+      const { id } = JSON.parse(message.content.toString()).data;
+      const cart: Cart = await this.cartsService.getCart(id);
 
       channel.ack(message);
 

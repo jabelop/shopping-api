@@ -9,12 +9,14 @@ export default class Cart implements CartInterface {
     userId: string;
     products?: Product[];
     total?: number;
+    created_at?: Date;
 
     constructor(id: string, userId: string, products: Product[] = [], total: number = 0) {
         this.id = new Id(id).value;
         this.userId = new Id(userId).value;
         this.products = products;
         this.total = new PositiveNumeric(total).value;
+        this.created_at = new Date();
     } 
     
 

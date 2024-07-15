@@ -18,6 +18,9 @@ export class CartMongoose {
 
   @Prop({min: 0})
   total: number;
+
+  @Prop()
+  created_at: Date = new Date();
 }
 
 export const CartMongooseSchema = SchemaFactory.createForClass(CartMongoose);
